@@ -25,13 +25,63 @@
         app:lottie_autoPlay="false"
         app:lottie_loop="false"
         android:adjustViewBounds="true"
-        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintVertical_bias="0.3"
         app:layout_constraintWidth_percent="0.8"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.google.android.material.slider.RangeSlider
+        android:id="@+id/sliderInputRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:stepSize="5.0"
+        android:valueFrom="30.0"
+        android:valueTo="100.0"
+        app:values="@array/initial_slider_values"
+        tools:ignore="missingConstraints"/>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/sliderPregain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:valueFrom="0.2"
+        android:valueTo="2.0"
+        android:stepSize="0.1"
+        android:value="1.0"
+        tools:ignore="missingConstraints"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/labelInputRange"
+        android:text="Input Range"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="missingConstraints"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/labelInputGain"
+        android:text="Input Gain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="missingConstraints"/>
+
+
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="32dp"
+        app:flow_verticalGap="8dp"
+        android:orientation="vertical"
+        app:constraint_referenced_ids="labelInputGain, sliderPregain, labelInputRange, sliderInputRange" />
 
 
 

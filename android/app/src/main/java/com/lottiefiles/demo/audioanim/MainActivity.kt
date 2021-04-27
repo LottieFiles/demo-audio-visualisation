@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private val am = AudioMeter(                       // initialize audio meter with some defaults
             alpha = 0.7,
-            preGain = 0.4,
+            preGain = 0.5,
             min_dB = 45.0,
             max_dB = 80.0
     )
@@ -75,6 +75,26 @@ class MainActivity : AppCompatActivity() {
             }
 
             this
+        }
+
+
+        // sliders
+        with(binding.sliderPregain) {
+
+            value = am.preGain.toFloat()
+
+            addOnChangeListener { _, _, _ ->
+                    am.preGain = value.toDouble()
+            }
+        }
+
+        with(binding.sliderInputRange) {
+
+            setValues(am.min_dB.toFloat(), am.max_dB.toFloat())
+            addOnChangeListener { _, _, _ ->
+                am.min_dB = values[0].toDouble()
+                am.max_dB = values[1].toDouble()
+            }
         }
 
     }

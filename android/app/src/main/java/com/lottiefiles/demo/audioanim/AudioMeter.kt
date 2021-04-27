@@ -7,7 +7,7 @@ import kotlin.math.sqrt
 
 class AudioMeter(
         var alpha: Double = 0.9,     // alpha value for exponential averaging,
-        var preGain: Double = 0.4,   // value for audio pre-gain
+        var preGain: Double = 0.5,   // value for audio pre-gain
         var min_dB: Double = 45.0,   // min audio level
         var max_dB: Double = 80.0    // max audio level
 ) {
