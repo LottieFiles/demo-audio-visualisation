@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="f5A-wy-aMl">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="Mid-gB-RCB">
+            <objects>
+                <viewController id="f5A-wy-aMl" customClass="ViewController" customModule="LottieAudioVisual" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="65l-uI-Veb">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qK1-RI-XWN" customClass="AnimationView" customModule="Lottie">
+                                <rect key="frame" x="20" y="261" width="374" height="374"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="qK1-RI-XWN" secondAttribute="height" id="Myr-CL-aib"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="7mD-QJ-cvQ"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="qK1-RI-XWN" firstAttribute="centerY" secondItem="65l-uI-Veb" secondAttribute="centerY" id="GbV-jN-Ma1"/>
+                            <constraint firstItem="7mD-QJ-cvQ" firstAttribute="trailing" secondItem="qK1-RI-XWN" secondAttribute="trailing" constant="20" id="csP-9t-djo"/>
+                            <constraint firstItem="qK1-RI-XWN" firstAttribute="leading" secondItem="7mD-QJ-cvQ" secondAttribute="leading" constant="20" id="sqG-ZQ-Gw8"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="animationView" destination="qK1-RI-XWN" id="gb4-Bh-YKr"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SvD-Od-u7y" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="132" y="116"/>
+        </scene>
+    </scenes>
+</document>
