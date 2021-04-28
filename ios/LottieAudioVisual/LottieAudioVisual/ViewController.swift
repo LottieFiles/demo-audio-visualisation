@@ -34,6 +34,7 @@ class ViewController: UIViewController {
     
     private var audioRecorder: AVAudioRecorder?
     private var timer: Timer?
+    private var audioSample: Float = 0
     
     private func setupRecorder() {
         let audioSession = AVAudioSession.sharedInstance()
@@ -73,12 +74,10 @@ class ViewController: UIViewController {
     }
     
     private func updateAudioMeter(_ power: Float) {
-        let normalized = power+42.8
-        let progress = normalized/80
+        let level = max(0.2, CGFloat(power) + 50) / 2
+        let progress = level/25
         
-        //print("\(power) - \(normalized) | \(progress)")
-        
-        animationView.currentProgress = CGFloat(progress)
+        animationView.currentFrame = 33*progress
     }
     
     deinit {
