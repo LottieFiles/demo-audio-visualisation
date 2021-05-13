@@ -40,11 +40,11 @@ namespace LottieAudioVisual
         LottieVisualSource lottieVisualSource = new LottieVisualSource();
         
         AudioGraph audioGraph;
-        AudioDeviceInputNode deviceInputNode;
         AudioFrameOutputNode frameOutputNode;
-               
-        AudioAnalyzer analyzer = new AudioAnalyzer(10000000, 1, 16000, 480, 120, 1024, false);
-        
+
+        AudioAnalyzer analyzer = new AudioAnalyzer(10000000, 1, 48000, 480, 120, 1024, false);
+        AudioProcessor audioProcessor = new AudioProcessor(0.7, 2000, 0, 80);
+
         static double frames = 120;
         static double scale = 33/frames;
         
@@ -57,9 +57,17 @@ namespace LottieAudioVisual
             await InitAudioGraph();
 
             //Create input, output, wire up
-            await CreateDeviceInputNode();
-            CreateFrameOutputNode();
+            frameOutputNode = AudioNodeFactory.CreateFrameOutputNode(audioGraph);
+
+            var deviceInputNode = await AudioNodeFactory.CreateDeviceInputNode(audioGraph);
             deviceInputNode.AddOutgoingConnection(frameOutputNode);
+            
+            //var deviceOutputNode = await AudioNodeFactory.CreateDeviceOutputNode(audioGraph);
+            
+            //var fileInputNode = await AudioNodeFactory.CreateFileInputNode(audioGraph);
+            //fileInputNode.AddOutgoingConnection(frameOutputNode);
+            
+            audioGraph.QuantumStarted += AudioGraph_QuantumStarted;            
 
             audioGraph.Start();
 
@@ -69,7 +77,9 @@ namespace LottieAudioVisual
         private async Task InitAudioGraph()
         {
 
-            AudioGraphSettings settings = new AudioGraphSettings(Windows.Media.Render.AudioRenderCategory.Speech);
+            AudioGraphSettings settings = new AudioGraphSettings(Windows.Media.Render.AudioRenderCategory.Media);
+            settings.DesiredSamplesPerQuantum = 100;
+            //var factor = settings.MaxPlaybackSpeedFactor;
 
             CreateAudioGraphResult result = await AudioGraph.CreateAsync(settings);
             if (result.Status != AudioGraphCreationStatus.Success)
@@ -78,35 +88,9 @@ namespace LottieAudioVisual
             }
 
             audioGraph = result.Graph;
-
         }
 
-        private async Task CreateDeviceInputNode()
-        {
-            DeviceInformationCollection devices = await DeviceInformation.FindAllAsync(Windows.Media.Devices.MediaDevice.GetAudioCaptureSelector());
-            var selectedDevice = devices.First(x => x.Name.Contains("Headset"));
-            
-            //var selectedDevice = devices.First();
-
-            // Create a device output node
-            CreateAudioDeviceInputNodeResult result = await audioGraph.CreateDeviceInputNodeAsync(MediaCategory.Speech, audioGraph.EncodingProperties, selectedDevice);
-            
-            if (result.Status != AudioDeviceNodeCreationStatus.Success)
-            {
-                // Cannot create device output node
-                //ShowErrorMessage(result.Status.ToString());
-                return;
-            }
-
-            deviceInputNode = result.DeviceInputNode;
-        }
-
-        private void CreateFrameOutputNode()
-        {
-            frameOutputNode = audioGraph.CreateFrameOutputNode();
-            audioGraph.QuantumStarted += AudioGraph_QuantumStarted;
-        }
-
+        
         private void AudioGraph_QuantumStarted(AudioGraph sender, object args)
         {
             AudioFrame frame = frameOutputNode.GetFrame();
@@ -134,91 +118,22 @@ namespace LottieAudioVisual
         {
             var rms = args.RMS[0];
             var peak = args.Peak[0];
-            //System.Diagnostics.Trace.WriteLine($"{DateTime.Now:HH:mm:ss:fff}: Frame processed, RMS={rms} Peak={peak}");
+            var dB = audioProcessor.GetLevel(rms);
+            var progress = audioProcessor.GetProgress(dB);
+
+#if DEBUG
+            System.Diagnostics.Trace.WriteLine($"{DateTime.Now:HH:mm:ss:fff}: Frame processed, prog={progress} dB={dB} RMS={rms} Peak={peak}");
+#endif
 
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                var value = rms * scale;
-                //var value = Math.Max(rms, peak * 0.8);
-                //var value = Convert.ToDouble(rms);
+                var value = progress * scale;
                 
                 animatedVisualPlayer.SetProgress(value);
             });            
         }
 
-        //private async Task CreateFileInputNode()
-        //{
-        //    if (audioGraph == null)
-        //        return;
-
-        //    FileOpenPicker filePicker = new FileOpenPicker();
-        //    filePicker.SuggestedStartLocation = PickerLocationId.MusicLibrary;
-        //    filePicker.FileTypeFilter.Add(".mp3");
-        //    filePicker.FileTypeFilter.Add(".wav");
-        //    filePicker.FileTypeFilter.Add(".wma");
-        //    filePicker.FileTypeFilter.Add(".m4a");
-        //    filePicker.ViewMode = PickerViewMode.Thumbnail;
-        //    StorageFile file = await filePicker.PickSingleFileAsync();
-
-        //    // File can be null if cancel is hit in the file picker
-        //    if (file == null)
-        //    {
-        //        return;
-        //    }
-        //    CreateAudioFileInputNodeResult result = await audioGraph.CreateFileInputNodeAsync(file);
-
-        //    if (result.Status != AudioFileNodeCreationStatus.Success)
-        //    {
-        //        //ShowErrorMessage(result.Status.ToString());
-        //    }
-
-        //    fileInputNode = result.FileInputNode;
-        //}
-
-        //private async Task CreateFileOutputNode()
-        //{
-        //    FileSavePicker saveFilePicker = new FileSavePicker();
-        //    saveFilePicker.FileTypeChoices.Add("Pulse Code Modulation", new List<string>() { ".wav" });
-        //    saveFilePicker.FileTypeChoices.Add("Windows Media Audio", new List<string>() { ".wma" });
-        //    saveFilePicker.FileTypeChoices.Add("MPEG Audio Layer-3", new List<string>() { ".mp3" });
-        //    saveFilePicker.SuggestedFileName = "New Audio Track";
-        //    StorageFile file = await saveFilePicker.PickSaveFileAsync();
-
-        //    // File can be null if cancel is hit in the file picker
-        //    if (file == null)
-        //    {
-        //        return;
-        //    }
-
-        //    Windows.Media.MediaProperties.MediaEncodingProfile mediaEncodingProfile;
-        //    switch (file.FileType.ToString().ToLowerInvariant())
-        //    {
-        //        case ".wma":
-        //            mediaEncodingProfile = MediaEncodingProfile.CreateWma(AudioEncodingQuality.High);
-        //            break;
-        //        case ".mp3":
-        //            mediaEncodingProfile = MediaEncodingProfile.CreateMp3(AudioEncodingQuality.High);
-        //            break;
-        //        case ".wav":
-        //            mediaEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
-        //            break;
-        //        default:
-        //            throw new ArgumentException();
-        //    }
-
-
-        //    // Operate node at the graph format, but save file at the specified format
-        //    CreateAudioFileOutputNodeResult result = await audioGraph.CreateFileOutputNodeAsync(file, mediaEncodingProfile);
-
-        //    if (result.Status != AudioFileNodeCreationStatus.Success)
-        //    {
-        //        // FileOutputNode creation failed
-        //        //ShowErrorMessage(result.Status.ToString());
-        //        return;
-        //    }
-
-        //    fileOutputNode = result.FileOutputNode;
-        //}
+        
     }
 
     [ComImport]
