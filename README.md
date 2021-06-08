@@ -9,7 +9,7 @@ Demonstration code for visualising audio with Lottie
 
 ## Documentation
 
-* LottieFiles [blog post](https://lottiefiles.com/blog/how-to-animate-lottie-in-response-to-audio/)
+* LottieFiles [blog post](https://lottiefiles.com/blog/working-with-lottie/how-to-animate-lottie-in-response-to-audio)
 
 ## License
 
